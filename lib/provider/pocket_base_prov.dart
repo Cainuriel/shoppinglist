@@ -12,8 +12,10 @@ import 'package:shoppinglist/model/pref_keys.dart';
 
 class PocketBaseProvider extends ChangeNotifier {
   final PocketBase _pb = PocketBase(
-    const String.fromEnvironment('SHOPPINGLIST_HOST', defaultValue: 'http://192.168.0.14:8090'),
-    lang: const String.fromEnvironment('SHOPPINGLIST_LANG', defaultValue: 'en-US'),
+    const String.fromEnvironment('http://192.168.0.14:8090', // SHOPPINGLIST_HOST variable
+        defaultValue: 'http://192.168.0.14:8090'),
+    lang: const String.fromEnvironment('SHOPPINGLIST_LANG',
+        defaultValue: 'en-US'),
     httpClientFactory: kIsWeb ? () => getClient() : null,
   );
   final collectionName = 'shoppinglist';
@@ -37,11 +39,18 @@ class PocketBaseProvider extends ChangeNotifier {
   List<Article> get allArticles => _allArticles;
   List<Article> get searchArticles => _searchArticles;
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(String username, String password) async {
+
     ensureKeepAlive();
-    final authData = await _pb.collection('users').authWithPassword(email, password);
+    final authData =
+        await _pb.collection('users').authWithPassword(username, password);
     _healthy = true;
+        debugPrint('authData: $authData');
+        debugPrint(_pb.authStore.isValid.toString());
+        debugPrint('token: ${_pb.authStore.token}');
+        debugPrint('id: ${_pb.authStore.model.id}');
     _userName = authData.record?.data['name'].toString() ?? "";
+           debugPrint('_userName: $_userName');
     final prefs = await SharedPreferences.getInstance();
     prefs.setString(PrefKeys.accessTokenPrefsKey, _pb.authStore.token);
     prefs.setString(PrefKeys.accessModelPrefsKey, _pb.authStore.model.id ?? '');
@@ -119,9 +128,11 @@ class PocketBaseProvider extends ChangeNotifier {
   }
 
   Future<void> searchForArticles(String what) async {
-    final searchString = 'active = false && (article ~ "$what" || shop ~ "$what")';
-    final result =
-        await _pb.collection(collectionName).getList(filter: searchString, sort: '+article');
+    final searchString =
+        'active = false && (article ~ "$what" || shop ~ "$what")';
+    final result = await _pb
+        .collection(collectionName)
+        .getList(filter: searchString, sort: '+article');
     List<Article> al = [];
     for (var element in result.items) {
       Article art = Article.fromJson(element.toJson());
@@ -166,9 +177,13 @@ class PocketBaseProvider extends ChangeNotifier {
 
   Future<RecordModel> updateArticle(Article article) async {
     if (article.id.isEmpty) {
-      return _pb.collection(collectionName).create(body: _articleToMap(article));
+      return _pb
+          .collection(collectionName)
+          .create(body: _articleToMap(article));
     }
-    return _pb.collection(collectionName).update(article.id, body: _articleToMap(article));
+    return _pb
+        .collection(collectionName)
+        .update(article.id, body: _articleToMap(article));
   }
 
   Future<RecordModel> toggleinCart(Article article) async {
@@ -186,7 +201,9 @@ class PocketBaseProvider extends ChangeNotifier {
       }
     }
     article.inCart = !article.inCart;
-    return _pb.collection(collectionName).update(article.id, body: _articleToMap(article));
+    return _pb
+        .collection(collectionName)
+        .update(article.id, body: _articleToMap(article));
   }
 
   Future<void> endShopping() async {

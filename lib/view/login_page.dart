@@ -1,4 +1,4 @@
-import 'package:email_validator/email_validator.dart';
+// import 'package:email_validator/email_validator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +30,8 @@ class LoginPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            decoration: ThemeProvider.optionsOf<ThemeOptions>(context).pageDecoration,
+            decoration:
+                ThemeProvider.optionsOf<ThemeOptions>(context).pageDecoration,
           ),
           const _LoginCard(),
         ],
@@ -91,10 +92,12 @@ class _LoginCardState extends State<_LoginCard> {
       });
       try {
         // try to authenticate the user...
-        await Provider.of<PocketBaseProvider>(context, listen: false).login(_email, _password);
+        await Provider.of<PocketBaseProvider>(context, listen: false)
+            .login(_email, _password);
         _savePrefs();
       } on ClientException catch (error) {
         if (mounted) {
+          debugPrint('error $error');
           Statics.showErrorSnackbar(context, error);
         }
       }
@@ -116,7 +119,9 @@ class _LoginCardState extends State<_LoginCard> {
           child: Center(
             child: Container(
               width: 340,
-              height: mq.viewInsets.bottom > 0 ? mq.size.height - 200 - mq.viewInsets.bottom : null,
+              height: mq.viewInsets.bottom > 0
+                  ? mq.size.height - 200 - mq.viewInsets.bottom
+                  : null,
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: const BorderRadius.all(Radius.circular(15)),
@@ -133,11 +138,13 @@ class _LoginCardState extends State<_LoginCard> {
                         Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                              padding:
+                                  const EdgeInsets.fromLTRB(16, 16, 16, 16),
                               child: Text(
                                 i18n(context).l_p_login,
                                 textScaler: const TextScaler.linear(2),
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                             const Spacer(),
@@ -166,17 +173,19 @@ class _LoginCardState extends State<_LoginCard> {
                                   decoration: InputDecoration(
                                     labelText: i18n(context).l_p_email,
                                   ),
-                                  validator: (value) {
-                                    if (EmailValidator.validate(value!)) {
-                                      return null;
-                                    }
-                                    return i18n(context).l_p_email_val;
-                                  },
+                                  // validator: (value) {
+                                  //   if (EmailValidator.validate(value!)) {
+                                  //     return null;
+                                  //   }
+                                  //   return i18n(context).l_p_email_val;
+                                  // },
                                   onFieldSubmitted: (value) {
                                     _emailFocus.unfocus();
-                                    FocusScope.of(context).requestFocus(_passwordFocus);
+                                    FocusScope.of(context)
+                                        .requestFocus(_passwordFocus);
                                   },
-                                  onSaved: (newValue) => _email = newValue ?? '',
+                                  onSaved: (newValue) =>
+                                      _email = newValue ?? '',
                                 ),
                               ),
                             ),
@@ -198,7 +207,8 @@ class _LoginCardState extends State<_LoginCard> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 16, bottom: 8),
+                              padding:
+                                  const EdgeInsets.only(left: 16, bottom: 8),
                               child: SizedBox(
                                 width: 240,
                                 child: TextFormField(
@@ -221,8 +231,10 @@ class _LoginCardState extends State<_LoginCard> {
                                   onFieldSubmitted: (value) {
                                     _submit();
                                   },
-                                  onEditingComplete: () => TextInput.finishAutofillContext(),
-                                  onSaved: (newValue) => _password = newValue ?? '',
+                                  onEditingComplete: () =>
+                                      TextInput.finishAutofillContext(),
+                                  onSaved: (newValue) =>
+                                      _password = newValue ?? '',
                                 ),
                               ),
                             ),
@@ -244,7 +256,8 @@ class _LoginCardState extends State<_LoginCard> {
                             children: [
                               const Spacer(),
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(16, 16, 34, 16),
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 16, 34, 16),
                                 child: ElevatedButton(
                                   child: Text(i18n(context).l_p_login_btn),
                                   onPressed: () {
@@ -268,16 +281,22 @@ class _LoginCardState extends State<_LoginCard> {
                                       _email,
                                     ).then((value) {
                                       if (value != null && value.isNotEmpty) {
-                                        Provider.of<PocketBaseProvider>(context, listen: false)
+                                        Provider.of<PocketBaseProvider>(context,
+                                                listen: false)
                                             .sendPasswordResetEmail(value)
-                                            .then((value) => Statics.showInfoSnackbar(
-                                                context, i18n(context).l_p_email_sent))
+                                            .then((value) =>
+                                                Statics.showInfoSnackbar(
+                                                    context,
+                                                    i18n(context)
+                                                        .l_p_email_sent))
                                             .onError((error, stackTrace) =>
-                                                Statics.showErrorSnackbar(context, error));
+                                                Statics.showErrorSnackbar(
+                                                    context, error));
                                       }
                                     });
                                   },
-                                  child: Text(i18n(context).l_p_forgot_password)),
+                                  child:
+                                      Text(i18n(context).l_p_forgot_password)),
                             ),
                           ],
                         )
