@@ -12,7 +12,7 @@ import 'package:shoppinglist/model/pref_keys.dart';
 
 class PocketBaseProvider extends ChangeNotifier {
   final PocketBase _pb = PocketBase(
-    const String.fromEnvironment('SHOPPINGLIST_HOST', defaultValue: 'http://localhost:8090'),
+    const String.fromEnvironment('SHOPPINGLIST_HOST', defaultValue: 'http://192.168.0.14:8090'),
     lang: const String.fromEnvironment('SHOPPINGLIST_LANG', defaultValue: 'en-US'),
     httpClientFactory: kIsWeb ? () => getClient() : null,
   );
